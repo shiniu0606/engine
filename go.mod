@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/acroca/go-symbols v0.1.1 // indirect
 	github.com/cweill/gotests v1.5.3 // indirect
+	github.com/gorilla/websocket v1.4.2
 	github.com/haya14busa/goplay v1.0.0 // indirect
 	github.com/josharian/impl v0.0.0-20191119165012-6b9658ad00c7 // indirect
 	github.com/mdempsky/gocode v0.0.0-20191202075140-939b4a677f2f // indirect

@@ -4,9 +4,16 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"flag"
+
+	"net/url"
 	base "github.com/shiniu0606/engine/base"
 	net "github.com/shiniu0606/engine/net"
 )
+
+var addr = flag.String("addr", "localhost:6666", "http service address")
+
+
 var stopChanForSys = make(chan os.Signal, 1)
 
 type ServerHandler struct {
@@ -33,8 +40,9 @@ func (r *ClientHandler) OnProcessMsgHandle(session net.ISession, msg *net.Messag
 var sh = ServerHandler{}
 
 func main() {
+	flag.Parse()
 
-	go net.StartTcpServer("tcp://:6666",&sh)
+	go net.StartWebscoketServer("ws://:6666",&sh,"","")
 
 	n := 10
 	for i := 0; i < n; i++ {
@@ -49,8 +57,11 @@ func main() {
 }
 
 func testTcpClient() {
+	u := url.URL{Scheme: "ws", Host: *addr, Path: "/"}
+	base.LogInfo("connecting to %s", u.String())
+
 	h := &ClientHandler{}
-	session := net.StartTcpConnect("127.0.0.1:6666",h)
+	session := net.StartWebsocketConnect(u.String(),h)
 
 	if session != nil {
 		msg := net.NewMsg(2,2,net.FlagNorlmal,[]byte("hello word"))

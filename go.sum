@@ -2,6 +2,8 @@ github.com/acroca/go-symbols v0.1.1 h1:q3IzaMNYocw/Bnc2a8jkXf0hM3+POfLoq30x8HYua
 github.com/acroca/go-symbols v0.1.1/go.mod h1:RKAIDWtcELAw6/wjNJGWRYZ7QEinSWoJeJ2H5cfK6AM=
 github.com/cweill/gotests v1.5.3 h1:k3t4wW/x/YNixWZJhUIn+mivmK5iV1tJVOwVYkx0UcU=
 github.com/cweill/gotests v1.5.3/go.mod h1:XZYOJkGVkCRoymaIzmp9Wyi3rUgfA3oOnkuljYrjFV8=
+github.com/gorilla/websocket v1.4.2 h1:+/TMaTYc4QFitKJxsQ7Yye35DkWvkdLcvGKqM+x0Ufc=
+github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 github.com/haya14busa/goplay v1.0.0 h1:ED4BMrGQ3WH7H3YXrcnWMVzj1xeSepaYTkLh1DtFi/4=
 github.com/haya14busa/goplay v1.0.0/go.mod h1:TUcdOVV7TTx0Fo9CmTf16Erfju/DzXTbB70+RYb43h8=
 github.com/josharian/impl v0.0.0-20191119165012-6b9658ad00c7 h1:dhk1N6iuFDo1Lcew31sAQxrh8GVWaw0xu0MWNnMc6ao=
