@@ -3,7 +3,6 @@ package net
 import (
 	"net/http"
 	"sync"
-	"sync/atomic"
 	"time"
 	"strings"
 
@@ -202,8 +201,8 @@ func (r *wsSession) connect() {
 func newWsAccept(conn *websocket.Conn, handler IMsgHandler) *wsSession {
 	wssession := wsSession{
 		Session: Session{
-			id:            atomic.AddUint64(&base.GetGlobal().MsgSessionId, 1),
-			sendChan:      make(chan *Message, 64),
+			id:            base.GetMsgSessionId(),
+			sendChan:      make(chan *Message, base.GetMaxMsgChanLen()),
 			closeChan:	   make(chan int),
 			msgTyp:        NetTypeWs,
 			handler:       handler,
@@ -221,8 +220,8 @@ func newWsAccept(conn *websocket.Conn, handler IMsgHandler) *wsSession {
 func newWsListen(addr, url string,enableWss bool,wssCrtPath, wssKeyPath string, handler IMsgHandler) *wsSession {
 	wssession := wsSession{
 		Session: Session{
-			id:            	atomic.AddUint64(&base.GetGlobal().MsgSessionId, 1),
-			sendChan:      	make(chan *Message, 64),
+			id:            	base.GetMsgSessionId(),
+			sendChan:      	make(chan *Message, base.GetMaxMsgChanLen()),
 			closeChan:	   	make(chan int),
 			msgTyp:        	NetTypeWs,
 			handler:       	handler,
@@ -245,8 +244,8 @@ func newWsListen(addr, url string,enableWss bool,wssCrtPath, wssKeyPath string, 
 func newWsConn(addr string, conn *websocket.Conn, handler IMsgHandler) *wsSession {
 	wssession := wsSession{
 		Session: Session{
-			id:            atomic.AddUint64(&base.GetGlobal().MsgSessionId, 1),
-			sendChan:      make(chan *Message, 64),
+			id:            base.GetMsgSessionId(),
+			sendChan:      make(chan *Message, base.GetMaxMsgChanLen()),
 			closeChan:	   make(chan int),
 			msgTyp:        NetTypeWs,
 			handler:       handler,

@@ -4,7 +4,6 @@ import (
 	"io"
 	"net"
 	"sync"
-	"sync/atomic"
 	"time"
 	"strings"
 
@@ -239,8 +238,8 @@ func (r *tcpSession) listen() {
 func newTcpAccept(conn net.Conn, handler IMsgHandler) *tcpSession {
 	tcpsession := tcpSession{
 		Session: Session{
-			id:            atomic.AddUint64(&base.GetGlobal().MsgSessionId, 1),
-			sendChan:      make(chan *Message, 64),
+			id:            base.GetMsgSessionId(),
+			sendChan:      make(chan *Message, base.GetMaxMsgChanLen()),
 			closeChan:	   make(chan int),
 			msgTyp:        NetTypeTcp,
 			handler:       handler,
@@ -258,7 +257,7 @@ func newTcpAccept(conn net.Conn, handler IMsgHandler) *tcpSession {
 func newTcpListen(listener net.Listener, handler IMsgHandler, addr string) *tcpSession {
 	tcpsession := tcpSession{
 		Session: Session{
-			id:            atomic.AddUint64(&base.GetGlobal().MsgSessionId, 1),
+			id:            base.GetMsgSessionId(),
 			msgTyp:        NetTypeTcp,
 			handler:       handler,
 			connTyp:       ConnTypeListen,
@@ -273,8 +272,8 @@ func newTcpListen(listener net.Listener, handler IMsgHandler, addr string) *tcpS
 func newTcpConn(addr string, conn net.Conn, handler IMsgHandler) *tcpSession {
 	tcpsession := tcpSession{
 		Session: Session{
-			id:            atomic.AddUint64(&base.GetGlobal().MsgSessionId, 1),
-			sendChan:      make(chan *Message, base.GetGlobal().MaxMsgChanLen),
+			id:            base.GetMsgSessionId(),
+			sendChan:      make(chan *Message, base.GetMaxMsgChanLen()),
 			closeChan:	   make(chan int),
 			msgTyp:        NetTypeTcp,
 			handler:       handler,

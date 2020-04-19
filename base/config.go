@@ -1,5 +1,9 @@
 package base
 
+import (
+	"sync/atomic"
+)
+
 type GlobalObj struct {
 	MaxMsgDataSize    uint32 //都需数据包的最大值
 	MaxConn          int    //当前服务器主机允许的最大链接个数
@@ -22,5 +26,13 @@ func init() {
 
 func GetGlobal() *GlobalObj{
 	return GlobalObject
+}
+
+func GetMsgSessionId() uint64 {
+	return atomic.AddUint64(&GlobalObject.MsgSessionId, 1)
+}
+
+func GetMaxMsgChanLen() uint32 {
+	return GlobalObject.MaxMsgChanLen
 }
 
