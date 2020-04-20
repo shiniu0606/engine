@@ -25,6 +25,7 @@ type ISession interface {
 	Id() uint64
 	GetConnType() ConnType
 	GetNetType() NetType
+	GetParser() IParser
 
 	LocalAddr() string
 	RemoteAddr() string

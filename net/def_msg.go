@@ -13,8 +13,8 @@ const (
 	MsgTimeout = 300
 )
 
-var ErrMsgLenTooShort = errors.New("Session Closed")
-var ErrMsgLenTooLong = errors.New("Session Blocked")
+var ErrMsgLenTooShort = errors.New("message len too short")
+var ErrMsgLenTooLong = errors.New("message len too long Blocked")
 
 const (
 	VerNormal    = 0x80	 //原始协议版本
@@ -27,15 +27,17 @@ const (
 type MessageHead struct {
 	Ver 	uint8 //协议版本
 	Fla 	uint8 //标记
-	Len   	uint32 //数据长度
 	Cmd   	uint8
 	Act	  	uint8
+	Len   	uint32 //数据长度
 }
 
 
 type Message struct {
 	Head       *MessageHead //消息头，可能为nil
 	Data       []byte       //消息数据
+
+	UserData   interface{}  //协议解包数据
 }
 
 func (r *Message) CmdAct() int {

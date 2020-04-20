@@ -9,8 +9,8 @@ import (
 	base "github.com/shiniu0606/engine/base"
 )
 
-var ErrSessionClosed = errors.New("Session Closed")
-var ErrSessionBlocked = errors.New("Session Blocked")
+var ErrSessionClosed = errors.New("session closes")
+var ErrSessionBlocked = errors.New("session blocked")
 
 type Session struct {
 	id uint64
@@ -23,6 +23,7 @@ type Session struct {
 	sendMutex sync.RWMutex
 
 	handler       IMsgHandler
+	parser        IParser
 	timeout       int //传输超时 
 
 	closeFlag          int32
@@ -40,6 +41,10 @@ func (r *Session) GetNetType() NetType {
 
 func (r *Session) GetConnType() ConnType {
 	return r.connTyp
+}
+
+func (r *Session) GetParser() IParser {
+	return r.parser
 }
 
 func (r *Session) SetRealRemoteAddr(addr string) {
@@ -94,6 +99,7 @@ func (r *Session) Send(m *Message) bool {
 		r.sendMutex.RUnlock()
 		return true
 	default:
+		r.sendMutex.RUnlock()
 		base.LogWarn("session write channel full msgque:%v", r.id)
 		r.Stop()
 		return false
@@ -127,6 +133,12 @@ func (r *Session) processMsg(s ISession,msg *Message) bool {
 	f := r.handler.GetHandlerFunc(msg)
 	if f == nil {
 		f = r.handler.OnProcessMsgHandle
+	}
+
+	if r.parser != nil {
+		base.LogInfo("processMsg start:%v",msg.Data)
+		r.parser.UnPack(msg)
+		base.LogInfo("processMsg start:%v",msg.UserData)
 	}
 
 	return f(s,msg)

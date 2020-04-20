@@ -1,6 +1,9 @@
 package base
 
 import (
+	"runtime"
+	"time"
+	"math/rand"
 	"sync/atomic"
 )
 
@@ -22,6 +25,10 @@ func init() {
 		MaxMsgChanLen:    64,	
 		MsgSessionId:     1,	
 	}
+	//随机种子
+	rand.Seed(time.Now().UnixNano())
+	//多核
+	runtime.GOMAXPROCS(runtime.NumCPU())
 }
 
 func GetGlobal() *GlobalObj{
