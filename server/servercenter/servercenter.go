@@ -9,10 +9,10 @@ import (
 )
 
 func init() {
-	InitLog()
-	base.LogInfo("InitLog ok")
 	InitConfig()
 	base.LogInfo("InitConfig ok")
+	InitLog()
+	base.LogInfo("InitLog ok")
 	InitDB()
 	base.LogInfo("InitDB ok")
 }

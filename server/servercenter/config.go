@@ -53,6 +53,5 @@ func InitDB() {
 
 func InitLog() {
 	filepath := serverconfig.LogPath
-
 	base.SetFileLog(filepath,1024*1024)
 }

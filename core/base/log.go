@@ -42,7 +42,6 @@ func (l *FileLogger) Write(msg string) {
 	if l.writer == nil {
 		return
 	}
-
 	addsize := l.size + len(msg)
 	if l.Pln {
 		addsize += 1
@@ -123,6 +122,7 @@ func (r *Log) SetLogger(logger ILogger) bool {
 	}
 	if f, ok := logger.(*FileLogger); ok {
 		if r.initFileLogger(f) == nil {
+			Printf("initFileLogger error/n")
 			return false
 		}
 	}
@@ -134,6 +134,7 @@ func (r *Log) SetLogger(logger ILogger) bool {
 func (r *Log) initFileLogger(f *FileLogger) *FileLogger {
 	if f.writer == nil {
 		f.FilePath, _ = filepath.Abs(f.FilePath)
+		Println(f.FilePath)
 		f.FilePath = strings.Replace(f.FilePath, "\\", "/",-1)
 		f.dirname = path.Dir(f.FilePath)
 		f.extname = path.Ext(f.FilePath)
@@ -148,10 +149,10 @@ func (r *Log) initFileLogger(f *FileLogger) *FileLogger {
 			}
 
 			f.size = int(info.Size())
-
 			return f
 		}
 	}
+	
 	return nil
 }
 

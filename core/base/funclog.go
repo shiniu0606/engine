@@ -18,6 +18,11 @@ func GetLog() *Log {
 }
 
 func SetFileLog(filepath string,maxsize int) {
+	if DefLog == nil {
+		DefLog = NewLog(10000, &ConsoleLogger{true})
+		DefLog.SetLevel(LogLevelDebug)
+		DefLog.StartLoop()
+	}
 	DefLog.SetLogger(&FileLogger{
 		FilePath:		filepath,
 		Pln:			true,
