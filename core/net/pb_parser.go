@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"github.com/golang/protobuf/proto"
 
-	base "github.com/shiniu0606/engine/base"
+	base "github.com/shiniu0606/engine/core/base"
 )
 
 var ErrMsgPbUnPack = errors.New("message pb unpack error")

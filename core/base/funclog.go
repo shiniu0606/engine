@@ -13,6 +13,18 @@ func init() {
 	DefLog.StartLoop()
 }
 
+func GetLog() *Log {
+	return DefLog
+}
+
+func SetFileLog(filepath string,maxsize int) {
+	DefLog.SetLogger(&FileLogger{
+		FilePath:		filepath,
+		Pln:			true,
+		MaxSize:		maxsize,
+	})
+}
+
 func LogInfo(v ...interface{}) {
 	DefLog.Info(v...)
 }

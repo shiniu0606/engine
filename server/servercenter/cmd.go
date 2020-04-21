@@ -1,0 +1,13 @@
+package servercenter
+
+const (
+	CMD_TICKING = 0x00				//心跳
+
+	ACT_TICKING_REQ = 0x01
+	ACT_TICKING_RESP= 0x02
+
+	CMD_RIGSTER_SERVER = 0x01		//注册			
+
+	ACT_RIGSTER_SERVER_REQ = 0x01
+	ACT_RIGSTER_SERVER_RESP = 0x02
+)

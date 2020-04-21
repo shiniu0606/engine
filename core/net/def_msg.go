@@ -24,6 +24,7 @@ const (
 	FlagCompress = 0x12 //数据是经过压缩的
 )
 
+//内存对齐
 type MessageHead struct {
 	Ver 	uint8 //协议版本
 	Fla 	uint8 //标记

@@ -6,29 +6,31 @@ import (
 	"sync/atomic"
 	"time"
 
-	base "github.com/shiniu0606/engine/base"
+	base "github.com/shiniu0606/engine/core/base"
 )
 
 var ErrSessionClosed = errors.New("session closes")
 var ErrSessionBlocked = errors.New("session blocked")
 
 type Session struct {
-	id uint64
+	id 				uint64
 
-	msgTyp  NetType       //消息类型
-	connTyp ConnType      //通道类型
-	realRemoteAddr string
+	msgTyp  		NetType       //消息类型
+	connTyp 		ConnType      //通道类型
+	realRemoteAddr 	string
 
-	sendChan  chan *Message
-	sendMutex sync.RWMutex
+	sendChan  		chan *Message
+	sendMutex 		sync.RWMutex
 
-	handler       IMsgHandler
-	parser        IParser
-	timeout       int //传输超时 
+	handler       	IMsgHandler
+	parser        	IParser
+	timeout       	int //传输超时 
 
 	closeFlag          int32
 	closeChan          chan int
 	lastTick      	   int64
+
+	user	 		interface{}		//用户
 }
 
 func (r *Session) Id() uint64 {
@@ -53,6 +55,14 @@ func (r *Session) SetRealRemoteAddr(addr string) {
 
 func (r *Session) RealRemoteAddr() string {
 	return r.realRemoteAddr
+}
+
+func (r *Session) SetUser(user interface{}) {
+	r.user = user
+}
+
+func (r *Session) GetUser() interface{} {
+	return r.user
 }
 
 func (r *Session) SetTimeout(t int) {

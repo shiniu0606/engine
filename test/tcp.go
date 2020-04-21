@@ -4,8 +4,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	base "github.com/shiniu0606/engine/base"
-	net "github.com/shiniu0606/engine/net"
+	base "github.com/shiniu0606/engine/core/base"
+	net "github.com/shiniu0606/engine/core/net"
 )
 var stopChanForSys = make(chan os.Signal, 1)
 

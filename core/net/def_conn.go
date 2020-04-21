@@ -37,6 +37,9 @@ type ISession interface {
 	SetTimeout(t int)
 	GetTimeout() int
 
+	SetUser(user interface{})
+	GetUser() interface{}
+
 	Send(m *Message) bool
 	SendString(str string)  bool
 }

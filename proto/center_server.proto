@@ -1,0 +1,27 @@
+syntax = "proto3";   
+package command;
+option go_package = "./server/command";
+
+
+//注册服务
+message ServerRegisterReq{
+    int32 serverid = 1;
+    int32 servertype = 2;
+    string servername = 3;
+    string serveraddr = 4;
+    bool  isopen = 5;
+}
+
+message ServerRegisterResp{
+    int32 status = 1; 
+}
+
+message ServerOpenReq{
+    int32 serverid = 1;
+    bool  isopen = 2;
+}
+
+message ServerOnlineReq{
+    int32 serverid = 1;
+    int32 num = 2;
+}

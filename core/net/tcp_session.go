@@ -7,7 +7,7 @@ import (
 	"time"
 	"strings"
 
-	base "github.com/shiniu0606/engine/base"
+	base "github.com/shiniu0606/engine/core/base"
 )
 
 type tcpSession struct {
@@ -166,13 +166,14 @@ func (r *tcpSession) writeMsg() {
 	}
 }
 
-func (r *tcpSession) connect() {
+func (r *tcpSession) connect() bool {
 	base.LogDebug("connect to addr:%s session:%d", r.address, r.id)
 	c, err := net.DialTimeout("tcp", r.address, time.Second*time.Duration(TcpDialTimeout))
 	if err != nil {
 		base.LogError("connect to addr:%s failed session:%d err:%v", r.address, r.id, err)
 		r.handler.OnConnectCompleteHandle(r, false)
 		r.Stop()
+		return false
 	} else {
 		r.conn = c
 		base.LogDebug("connect to addr:%s ok session:%d", r.address, r.id)
@@ -189,8 +190,11 @@ func (r *tcpSession) connect() {
 			})
 		} else {
 			r.Stop()
+			return false
 		}
 	}
+
+	return true
 }
 
 func (r *tcpSession) listen() {
@@ -318,8 +322,9 @@ func StartTcpConnect(addr string, handler IMsgHandler, parser IParser) ISession 
 	session := newTcpConn(addr, nil,handler,parser)
 	
 	if handler.OnStartHandle(session) {
-		session.connect()
-		return session
+		if session.connect() {
+			return session
+		}
 	} else {
 		session.Stop()
 	}

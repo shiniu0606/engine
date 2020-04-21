@@ -1,0 +1,15 @@
+{
+    "ServerId"   : 1,
+    "ServerName" : "ServerCenter",
+    "TcpPort"    : 8000,
+    "LogPath"    : "./logs/servercenter.log",
+    "DataBase": {
+        "User":"root",
+        "Password":"881123zhq",
+        "Name":"center_db",
+        "Port":3306,
+        "IP": "127.0.0.1",
+        "MaxPoll": 20,
+        "IdlePoll": 10
+    }
+}

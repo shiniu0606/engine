@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/websocket"
-	base "github.com/shiniu0606/engine/base"
+	base "github.com/shiniu0606/engine/core/base"
 )
 
 type wsSession struct {

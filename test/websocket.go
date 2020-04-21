@@ -7,8 +7,8 @@ import (
 	"flag"
 
 	"net/url"
-	base "github.com/shiniu0606/engine/base"
-	net "github.com/shiniu0606/engine/net"
+	base "github.com/shiniu0606/engine/core/base"
+	net "github.com/shiniu0606/engine/core/net"
 )
 
 var addr = flag.String("addr", "localhost:6666", "http service address")
