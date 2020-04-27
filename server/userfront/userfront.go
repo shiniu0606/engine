@@ -7,14 +7,22 @@ import (
 	common "github.com/shiniu0606/engine/server/common"
 )
 
-//连接centerserver
-func InitCenterServerClient() {
+var centerSession * net.ISession
+
+
+func InitCenterServerClient() bool {
 	handler := InitCenterClientHandler()
 	parser  := InitCenterClientParser()
-	net.StartTcpConnect("tcp://:"+base.Itoa(serverconfig.TcpPort),handler,parser)
+	centerSession = net.StartTcpConnect("tcp://:"+base.Itoa(serverconfig.TcpPort),handler,parser)
+
+	if centerSession == nil {
+		base.LogError("InitCenterServerClient error")
+		return false
+	}
+	return true
 }
 
-//启动userfront
+
 func InitUserServer() {
 
 }

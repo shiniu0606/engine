@@ -29,6 +29,7 @@ func timerTick() {
 		for {
 			select {
 			case <-ticker.C:
+				//LogInfo("time tick")
 				NowTick = time.Now().UnixNano() / 1000000
 				Timestamp = NowTick / 1000
 			}

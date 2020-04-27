@@ -29,6 +29,8 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 	//多核
 	runtime.GOMAXPROCS(runtime.NumCPU())
+	//内置timer
+	timerTick()
 }
 
 func GetGlobal() *GlobalObj{
