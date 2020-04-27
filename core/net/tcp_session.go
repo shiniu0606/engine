@@ -107,6 +107,7 @@ func (r *tcpSession) write() {
 			base.LogError("session write panic id:%v err:%v", r.id, err.(error))
 			base.LogStack()
 		}
+		r.handler.OnCloseHandle(r)
 		if r.conn != nil {
 			r.conn.Close()
 		}
@@ -125,7 +126,6 @@ func (r *tcpSession) writeMsg() {
 	for {
 		select {
 		case <- r.closeChan:
-			r.handler.OnCloseHandle(r)
 			base.LogInfo("session write close id:%v ", r.id)
 			return
 		case m = <-r.sendChan:

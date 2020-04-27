@@ -23,6 +23,10 @@ func (r *ServerHandler) OnProcessMsgHandle(session net.ISession, msg *net.Messag
 	return true
 }
 
+func (r *ServerHandler) OnCloseHandle(session net.ISession)  {
+	base.LogInfo("ServerHandler OnCloseHandle")
+}
+
 func (r *ClientHandler) OnProcessMsgHandle(session net.ISession, msg *net.Message) bool {
 	//session.Send(msg)
 	base.LogInfo("ClientHandler ProcessMsgHandle :%v",string(msg.Data))
@@ -41,6 +45,10 @@ func main() {
 		testTcpClient()
 	}
 
+	for i := 0; i < n; i++ {
+		testTcpClientClose()
+	}
+
 	signal.Notify(stopChanForSys, os.Interrupt, os.Kill, syscall.SIGTERM)
 	select {
 	case <-stopChanForSys:
@@ -52,6 +60,17 @@ func testTcpClient() {
 	h := &ClientHandler{}
 	session := net.StartTcpConnect("127.0.0.1:6666",h,nil)
 
+	if session != nil {
+		msg := net.NewMsg(2,2,net.FlagNorlmal,[]byte("hello word"))
+		session.Send(msg)
+	}
+}
+
+func testTcpClientClose() {
+	
+	h := &ClientHandler{}
+	session := net.StartTcpConnect("127.0.0.1:6666",h,nil)
+	defer session.Stop()
 	if session != nil {
 		msg := net.NewMsg(2,2,net.FlagNorlmal,[]byte("hello word"))
 		session.Send(msg)

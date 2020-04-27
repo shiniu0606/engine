@@ -78,7 +78,6 @@ func (r *wsSession) writeMsg() {
 	for {
 		select {
 		case <- r.closeChan:
-			r.handler.OnCloseHandle(r)
 			base.LogInfo("wsSession write close id:%v ", r.id)
 			return
 		case m = <-r.sendChan:
@@ -105,6 +104,7 @@ func (r *wsSession) write() {
 			base.LogError("wsSession write panic id:%v err:%v", r.id, err.(error))
 			base.LogStack()
 		}
+		r.handler.OnCloseHandle(r)
 		if r.conn != nil {
 			r.conn.Close()
 		}
