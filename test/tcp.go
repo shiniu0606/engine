@@ -34,7 +34,7 @@ var sh = ServerHandler{}
 
 func main() {
 
-	go net.StartTcpServer("tcp://:6666",&sh)
+	go net.StartTcpServer("tcp://:6666",&sh,nil)
 
 	n := 10
 	for i := 0; i < n; i++ {
@@ -50,7 +50,7 @@ func main() {
 
 func testTcpClient() {
 	h := &ClientHandler{}
-	session := net.StartTcpConnect("127.0.0.1:6666",h)
+	session := net.StartTcpConnect("127.0.0.1:6666",h,nil)
 
 	if session != nil {
 		msg := net.NewMsg(2,2,net.FlagNorlmal,[]byte("hello word"))

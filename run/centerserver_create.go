@@ -12,7 +12,17 @@ import (
 var stopChanForSys = make(chan os.Signal, 1)
 
 func main() {
+	var cofpath string
+	
+	flag.StringVar(&cofpath, "cofpath", "", "配置文件路径")
 	flag.Parse()
+
+	server.InitConfig(cofpath)
+	base.LogInfo("InitConfig ok")
+	server.InitLog()
+	base.LogInfo("InitLog ok")
+	server.InitDB()
+	base.LogInfo("InitDB ok")
 
 	server.InitServer()
 

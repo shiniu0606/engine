@@ -18,9 +18,9 @@ type Server struct {
 	ServerId  		int  			`gorm:"column:server_id;"`
 	ServerName      string			`gorm:"column:server_name;size:30;"`
 	ServerType      ServerType 		`gorm:"column:server_type;"`
-	IsEnable		bool			`gorm:"column:is_enabled;"`  //是否开放
-	OnlineNum		int 			`gorm:"column:online_num;"`  //在线人数
-	ServerAddr      string  		`gorm:"column:server_addr;size:255;"`
+	IsEnable		bool			`gorm:"column:is_enabled;"`  			//是否开放
+	OnlineNum		int 			`gorm:"column:online_num;"`  			//在线人数
+	ServerAddr      string  		`gorm:"column:server_addr;size:255;"`	//服务地址
 }
 
 func (Server) TableName() string {

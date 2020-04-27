@@ -14,15 +14,15 @@ type ServerHandler struct {
 func InitParser() net.IParser {
 	p := net.NewParser(net.ParserTypePB)
 
-	p.Register(CMD_RIGSTER_SERVER,ACT_RIGSTER_SERVER_REQ,&command.ServerRegisterReq{})
+	p.Register(command.CMD_RIGSTER_SERVER,command.ACT_RIGSTER_SERVER_REQ,&command.ServerRegisterReq{})
 	return p
 }
 
 func InitHandler() net.IMsgHandler {
 	var handler = &ServerHandler{}
 
-	handler.Register(CMD_TICKING,ACT_TICKING_REQ,registerServer)
-	handler.Register(CMD_RIGSTER_SERVER,ACT_RIGSTER_SERVER_REQ,registerServer)
+	handler.Register(command.CMD_TICKING,command.ACT_TICKING_REQ,pingServer)
+	handler.Register(command.CMD_RIGSTER_SERVER,command.ACT_RIGSTER_SERVER_REQ,registerServer)
 
 	return handler
 }

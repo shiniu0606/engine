@@ -8,18 +8,22 @@ import (
 	common "github.com/shiniu0606/engine/server/common"
 )
 
-func init() {
-	InitConfig()
-	base.LogInfo("InitConfig ok")
-	InitLog()
-	base.LogInfo("InitLog ok")
-	InitDB()
-	base.LogInfo("InitDB ok")
-}
-
 //创建表
 func CreateDBTable() {
-	jbp.GetDB().Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(&common.Server{})
+	if jbp.GetDB().HasTable(&common.Server{}) {
+		jbp.GetDB().AutoMigrate(&common.Server{})
+	}else {
+		jbp.GetDB().Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(&common.Server{})
+	}
+	
+	if jbp.GetDB().HasTable(&common.Account{}) {
+        jbp.GetDB().AutoMigrate(&common.Account{})
+    } else {
+		jbp.GetDB().Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(&common.Account{})
+    }
+	
+	jbp.GetDB().Model(&common.Account{}).AddUniqueIndex("idx_user_id", "user_id")
+	jbp.GetDB().Model(&common.Account{}).AddIndex("idx_acc_name", "acc_name")
 }
 
 func InitServer() {

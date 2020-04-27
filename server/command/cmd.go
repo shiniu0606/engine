@@ -1,4 +1,4 @@
-package servercenter
+package command
 
 const (
 	CMD_TICKING = 0x00				//心跳

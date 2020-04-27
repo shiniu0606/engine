@@ -77,12 +77,16 @@ func (r *wsSession) writeMsg() {
 	defer tick.Stop()
 	for {
 		select {
+		case <- r.closeChan:
+			r.handler.OnCloseHandle(r)
+			base.LogInfo("wsSession write close id:%v ", r.id)
+			return
 		case m = <-r.sendChan:
 			if m != nil {
 				err := r.conn.WriteMessage(websocket.BinaryMessage, m.Data)
 				if err != nil {
 					base.LogError("wsSession write id:%v err:%v", r.id, err)
-					break
+					r.Stop() //close chan
 				}
 				r.lastTick = base.GetTimestamp()
 			}
@@ -91,10 +95,6 @@ func (r *wsSession) writeMsg() {
 			if r.isTimeout(tick) {
 				r.Stop()
 			}
-		case <- r.closeChan:
-			r.handler.OnCloseHandle(r)
-			base.LogInfo("wsSession write close id:%v ", r.id)
-			return
 		}
 	}
 }

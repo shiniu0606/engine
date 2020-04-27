@@ -1,0 +1,17 @@
+{
+    "ServerId"   : 100,
+    "ServerName" : "userfront",
+    "TcpPort"    : 8100,
+    "RemoteAddr" : "127.0.0.1",
+    "CenterAddr" : "127.0.0.1:8000",
+    "LogPath"    : "./logs/userfront_8100.log",
+    "DataBase": {
+        "User":"root",
+        "Password":"881123zhq",
+        "Name":"center_db",
+        "Port":3306,
+        "IP": "127.0.0.1",
+        "MaxPoll": 20,
+        "IdlePoll": 10
+    }
+}

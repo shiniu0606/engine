@@ -124,6 +124,10 @@ func (r *tcpSession) writeMsg() {
 	defer tick.Stop()
 	for {
 		select {
+		case <- r.closeChan:
+			r.handler.OnCloseHandle(r)
+			base.LogInfo("session write close id:%v ", r.id)
+			return
 		case m = <-r.sendChan:
 			if m != nil {
 				//base.LogInfo("=========>write msg data:%v",m.Head)
@@ -134,7 +138,7 @@ func (r *tcpSession) writeMsg() {
 					n, err := r.conn.Write(head[writeCount:])
 					if err != nil {
 						base.LogError("session write id:%v err:%v", r.id, err)
-						break
+						return
 					}
 					writeCount += n
 				}
@@ -143,7 +147,7 @@ func (r *tcpSession) writeMsg() {
 					n, err := r.conn.Write(m.Data[writeCount-MsgHeadSize : int(m.Head.Len)])
 					if err != nil {
 						base.LogError("session write id:%v err:%v", r.id, err)
-						break
+						return
 					}
 					writeCount += n
 				}
@@ -158,10 +162,6 @@ func (r *tcpSession) writeMsg() {
 			if r.isTimeout(tick) {
 				r.Stop()
 			}
-		case <- r.closeChan:
-			r.handler.OnCloseHandle(r)
-			base.LogInfo("session write close id:%v ", r.id)
-			return
 		}
 	}
 }
