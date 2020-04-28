@@ -16,5 +16,6 @@
 
 dbcreate
 centerserver
+userfrontserver
 
 logs/
