@@ -18,11 +18,8 @@ func main() {
 	flag.Parse()
 
 	server.InitConfig(cofpath)
-	base.LogInfo("InitConfig ok")
 	server.InitLog()
-	base.LogInfo("InitLog ok")
 	server.InitDB()
-	base.LogInfo("InitDB ok")
 
 	server.InitServer()
 

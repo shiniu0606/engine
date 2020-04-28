@@ -9,7 +9,7 @@ import (
 )
 
 type ServerConfig struct {
-	ServerId 	int 	`json:"ServerId"`
+	ServerId 	int32 	`json:"ServerId"`
 	ServerName 	string 	`json:"ServerName"`
 	TcpPort 	int 	`json:"TcpPort"`
 	RemoteAddr  string	`json:"RemoteAddr"`

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	server "github.com/shiniu0606/engine/server/servercenter"
-	base "github.com/shiniu0606/engine/core/base"
+	//base "github.com/shiniu0606/engine/core/base"
 )
 
 func main() {
@@ -13,11 +13,8 @@ func main() {
 	flag.Parse()
 
 	server.InitConfig(cofpath)
-	base.LogInfo("InitConfig ok")
 	server.InitLog()
-	base.LogInfo("InitLog ok")
 	server.InitDB()
-	base.LogInfo("InitDB ok")
 
 	server.CreateDBTable()
 }
