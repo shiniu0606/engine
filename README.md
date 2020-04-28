@@ -1,2 +1,2 @@
 # engine
-golang 服务公共库
+golang game server
