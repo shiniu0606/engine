@@ -14,7 +14,7 @@ var stopChanForSys = make(chan os.Signal, 1)
 func main() {
 	var cofpath string
 	
-	flag.StringVar(&cofpath, "cofpath", "", "配置文件路径")
+	flag.StringVar(&cofpath, "cofpath", "servercenter.json", "配置文件路径")
 	flag.Parse()
 
 	server.InitConfig(cofpath)

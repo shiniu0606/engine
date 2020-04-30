@@ -14,8 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-dbcreate
-centerserver
-userfrontserver
+#dbcreate
+#centerserver
+#userfrontserver
 
 logs/
