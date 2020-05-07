@@ -11,12 +11,17 @@ type UserHandler struct {
 	net.DefMsgHandler
 }
 
+func (r *UserHandler) OnStartHandle(session net.ISession) bool {
+	base.LogInfo("user front tcp server start")
+	return true
+}
+
 func (r *UserHandler) OnCloseHandle(session net.ISession) {
-	base.LogInfo("user tcp closed")
+	base.LogInfo("user front tcp closed")
 }
 
 func (r *UserHandler) OnConnectCompleteHandle(session net.ISession, ok bool) bool {
-	base.LogInfo("center tcp client connect complete")
+	base.LogInfo("user front tcp client connect complete")
 	return true
 }
 

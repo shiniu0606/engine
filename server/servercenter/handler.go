@@ -69,6 +69,8 @@ func registerServer(session net.ISession, msg *net.Message) bool {
 
 	GetCenterServer().Add(&serversession)
 
+	common.CreateServer(&serversession.server)
+
 	//base.LogInfo("registerServer:%v",req)
 	return true
 }
