@@ -27,7 +27,7 @@ func (r *ServerClientHandler) OnConnectCompleteHandle(session net.ISession, ok b
 	req.Serveraddr = serverconfig.RemoteAddr
 	req.Isopen = true
 	//register userfront to centerserver
-	msg := net.NewMsg(2,2,net.FlagNorlmal,session.GetParser().Pack(req))
+	msg := net.NewMsg(command.CMD_RIGSTER_SERVER,command.ACT_RIGSTER_SERVER_REQ,net.FlagNorlmal,session.GetParser().Pack(req))
 	session.Send(msg)
 	base.LogInfo("center tcp client connect complete")
 	return true

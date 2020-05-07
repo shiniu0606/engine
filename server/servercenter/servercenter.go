@@ -8,6 +8,10 @@ import (
 	common "github.com/shiniu0606/engine/server/common"
 )
 
+var (
+	centerserver *CenterServer
+)
+
 //创建表
 func CreateDBTable() {
 	if jbp.GetDB().HasTable(&common.Server{}) {
@@ -30,4 +34,15 @@ func InitServer() {
 	handler := InitHandler()
 	parser  := InitParser()
 	net.StartTcpServer("tcp://:"+base.Itoa(serverconfig.TcpPort),handler,parser)
+}
+
+func NewCenterServer(serversession IServerSession){
+	centerserver = &CenterServer{
+		server : serversession,
+		connections : make(map[int]IServerSession),
+	}
+}
+
+func GetCenterServer() *CenterServer {
+	return centerserver
 }

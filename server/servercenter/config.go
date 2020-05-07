@@ -12,6 +12,7 @@ type ServerConfig struct {
 	ServerId 	int 	`json:"ServerId"`
 	ServerName 	string 	`json:"ServerName"`
 	TcpPort 	int 	`json:"TcpPort"`
+	RemoteAddr  string	`json:"RemoteAddr"`
 	LogPath 	string 	`json:"LogPath"`
 	DataBase   DBConfig  `json:"DataBase"`
 }

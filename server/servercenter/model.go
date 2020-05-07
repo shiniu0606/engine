@@ -41,14 +41,9 @@ type IServerManager interface {
 }
 
 type CenterServer struct {
-	server 				common.Server
-	handler 			net.IMsgHandler
+	server 				IServerSession
 	connections 		map[int]IServerSession
 	connLock    		sync.RWMutex
-}
-
-func (s *CenterServer) GetHandler() net.IMsgHandler {
-	return s.handler
 }
 
 func (s *CenterServer) Add(conn IServerSession) {
