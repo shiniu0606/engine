@@ -15,6 +15,7 @@ type ServerClientHandler struct {
 func (r *ServerClientHandler) OnCloseHandle(session net.ISession) {
 	base.LogInfo("center server tcp client closed")
 
+	centerSession = nil
 	//reconnect
 	ConnectCenterServerScheduler()
 }

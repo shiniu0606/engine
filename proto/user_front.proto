@@ -1,0 +1,17 @@
+syntax = "proto3";   
+package command;
+option go_package = "./server/command";
+
+message AccountRegisterReq{
+    string accname = 1;
+    string accpassword = 2;
+    int32  fromtype =3;
+}
+
+message UserRegisterResp{
+    int32 status = 1; 
+    int64 userid = 2;
+    int64 gold   = 3;
+    int32 level  = 4;
+    int32 exp    = 5;
+}
