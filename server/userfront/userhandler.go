@@ -1,7 +1,7 @@
 package userfront
 
 import (
-	//command "github.com/shiniu0606/engine/server/command"
+	command "github.com/shiniu0606/engine/server/command"
 
 	base "github.com/shiniu0606/engine/core/base"
 	net "github.com/shiniu0606/engine/core/net"
@@ -32,5 +32,21 @@ func InitUserParser() net.IParser {
 
 func InitUserHandler() net.IMsgHandler {
 	var handler = &UserHandler{}
+
+	handler.Register(command.CMD_USER_MAIN,command.ACT_USER_REGISTER_REQ,userRegister)
+	handler.Register(command.CMD_USER_MAIN,command.ACT_USER_LOGIN_REQ,userLogin)
+
 	return handler
+}
+
+func userRegister(session net.ISession, msg *net.Message) bool {
+	base.LogInfo("userRegister:%v",msg)
+	
+	return true
+}
+
+func userLogin(session net.ISession, msg *net.Message) bool {
+	base.LogInfo("userRegister:%v",msg)
+	
+	return true
 }

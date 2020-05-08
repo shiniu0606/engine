@@ -37,7 +37,6 @@ type IServerManager interface {
 	Remove(s IServerSession)                
 	Get(id uint32) (IServerSession, error)
 	Len() int 
-	GetHandler() net.IMsgHandler
 }
 
 type CenterServer struct {

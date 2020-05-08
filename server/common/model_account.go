@@ -30,8 +30,9 @@ func GetAccountByUserId(userid int64) (*Account,error) {
 	return &account, nil
 }
 
-func GetAccountByAccountName(userid int64) (*Account,error) {
+func GetAccountByAccountName(accname string) (*Account,error) {
 	account := Account{}
+	account.AccountName = accname
 	if err := jbp.GetDB().First(account, "acc_name=? ", account.AccountName).Error; err != nil {
 		if err != gorm.ErrRecordNotFound {
 			return nil, errors.New("CreateAccount user_id query error")
