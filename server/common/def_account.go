@@ -12,7 +12,11 @@ type Account struct {
 	AccountPassword      	string  		`gorm:"column:acc_password;size:32;"`			//密码
 	IsEnable				bool			`gorm:"column:is_enabled;"`  					//是否封号
 	Platform				int				`gorm:"column:platform;"`						//注册来源(第三方渠道账号，或者代理推广下载)
-	Phone					string 			`gorm:"column:phone;size:18;"`  				//手机号	
+	Phone					string 			`gorm:"column:phone;size:18;"`  				//手机号
+	Level					int				`gorm:"column:user_level;"`						//等级
+	Exp						int 			`gorm:"column:user_exp;"`						//经验
+	Gold					int64			`gorm:"column:user_gold;"`						//流通货币
+	BindGold				int64			`gorm:"column:user_bindgold;"`					//绑定货币
 	CreateTime   			time.Time 		`gorm:"column:create_time;"`					//注册时间
 	CreateIP           		string      	`gorm:"column:create_ip;size:15;"`             //注册ip  
 }
@@ -20,3 +24,4 @@ type Account struct {
 func (Account) TableName() string {
 	return "accounts"
 }
+

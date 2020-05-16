@@ -5,7 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	base "github.com/shiniu0606/engine/core/base"
+	//base "github.com/shiniu0606/engine/core/base"
 	jbp "github.com/shiniu0606/engine/core/db"
 )
 
@@ -16,7 +16,7 @@ func CreateAccount(account *Account) (int64,error) {
 	}
 
 	if err := jbp.GetDB().Create(account).Error; err != nil {
-		base.LogError("CreateAccount data failed:%v",err)
+		//base.LogError("CreateAccount data failed:%v",err)
 		return 0, errors.New("CreateAccount data failed")
 	}
 	return account.UID, nil
@@ -25,7 +25,7 @@ func CreateAccount(account *Account) (int64,error) {
 func GetAccountByUserId(userid int64) (*Account,error) {
 	account := Account{}
 	if err := jbp.GetDB().First(&account, "user_id=? ", userid).Error; err != nil {
-		return nil, errors.New("CreateAccount user_id query error")
+		return nil, errors.New("GetAccountByUserId user_id query error")
 	} 
 	return &account, nil
 }
@@ -35,7 +35,7 @@ func GetAccountByAccountName(accname string) (*Account,error) {
 	account.AccountName = accname
 	if err := jbp.GetDB().First(account, "acc_name=? ", account.AccountName).Error; err != nil {
 		if err != gorm.ErrRecordNotFound {
-			return nil, errors.New("CreateAccount user_id query error")
+			return nil, errors.New("GetAccountByAccountName user_id query error")
 		}
 		return nil,nil
 	}

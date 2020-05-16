@@ -18,4 +18,5 @@ require (
 	google.golang.org/grpc v1.28.1 // indirect
 	google.golang.org/protobuf v1.21.0
 	sourcegraph.com/sqs/goreturns v0.0.0-20181028201513-538ac6014518 // indirect
+	github.com/go-redis/redis v6.15.7+incompatible
 )
