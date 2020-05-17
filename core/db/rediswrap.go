@@ -2,8 +2,8 @@ package db
 
 import (
 	"errors"
-	//"io"
-	//"net"
+	"io"
+	"net"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -122,4 +122,139 @@ func (r *Redis) Script(cmd int, keys []string, args ...interface{}) (interface{}
 	}
 
 	return re, nil
+}
+
+func (r *RedisManager) GetByRid(rid int) *Redis {
+	r.lock.RLock()
+	db := r.dbs[rid]
+	r.lock.RUnlock()
+	return db
+}
+
+func (r *RedisManager) GetGlobal() *Redis {
+	return r.GetByRid(0)
+}
+
+func (r *RedisManager) Exist(id int) bool {
+	r.lock.Lock()
+	_, ok := r.dbs[id]
+	r.lock.Unlock()
+	return ok
+}
+
+func (r *RedisManager) close() {
+	for _, v := range r.dbs {
+		if v.pubsub != nil {
+			v.pubsub.Close()
+		}
+		v.Close()
+	}
+}
+
+
+func (r *RedisManager) Sub(fun func(channel, data string), channels ...string) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+	r.channels = channels
+	r.fun = fun
+	for _, v := range r.subMap {
+		if v.pubsub != nil {
+			v.pubsub.Close()
+		}
+		pubsub := v.Subscribe(channels...)
+		v.pubsub = pubsub
+		base.LogInfo("[redis]config:%v, subscribe channel:%v", v.conf, channels)
+		base.Go(func() {
+			for {
+				msg, err := pubsub.ReceiveMessage()
+				if err == nil {
+					base.Go(func() { fun(msg.Channel, msg.Payload) })
+				} else if _, ok := err.(net.Error); !ok {
+					if err.Error() != "redis: reply is empty" {
+						base.LogFatal("[redis]pubsub broken err:%v", err)
+						break
+					}
+				}
+			}
+		})
+	}
+}
+
+func (r *RedisManager) Add(id int, conf *RedisConfig) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+	base.LogInfo("new redis id:%v conf:%#v", id, conf)
+	if _, ok := r.dbs[id]; ok {
+		base.LogError("redis already have id:%v", id)
+		return
+	}
+
+	re := &Redis{
+		Client: redis.NewClient(&redis.Options{
+			Addr:     conf.Addr,
+			Password: conf.Passwd,
+			PoolSize: conf.PoolSize,
+		}),
+		conf:    conf,
+		manager: r,
+	}
+
+	re.WrapProcess(func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
+		return func(cmd redis.Cmder) error {
+			err := oldProcess(cmd)
+			if err != nil {
+				_, retry := err.(net.Error)
+				if !retry {
+					retry = err == io.EOF
+				}
+				if retry {
+					err = oldProcess(cmd)
+				}
+			}
+			return err
+		}
+	})
+
+	if v, ok := r.subMap[conf.Addr]; !ok {
+		r.subMap[conf.Addr] = re
+		if len(r.channels) > 0 {
+			pubsub := re.Subscribe(r.channels...)
+			re.pubsub = pubsub
+			base.LogInfo("[redis]config:%v, subscribe channel:%v", v.conf, r.channels)
+			base.Go(func() {
+				for {
+					msg, err := pubsub.ReceiveMessage()
+					if err == nil {
+						base.Go(func() { r.fun(msg.Channel, msg.Payload) })
+					} else if _, ok := err.(net.Error); !ok {
+						if err.Error() != "redis: reply is empty" {
+							base.LogFatal("[redis]pubsub broken err:%v", err)
+							break
+						}
+					}
+				}
+			})
+		}
+	}
+	r.dbs[id] = re
+}
+
+var redisManagers []*RedisManager
+
+func NewRedisManager(conf *RedisConfig) *RedisManager {
+	redisManager := &RedisManager{
+		subMap: map[string]*Redis{},
+		dbs:    map[int]*Redis{},
+	}
+
+	redisManager.Add(0, conf)
+	redisManagers = append(redisManagers, redisManager)
+	return redisManager
+}
+
+func RedisError(err error) bool {
+	if err == redis.Nil {
+		return false
+	}
+	return err != nil
 }
