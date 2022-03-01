@@ -27,8 +27,9 @@ type IParserFactory interface {
 }
 
 type Parser struct {
-	ptype   ParserType
-	typeMap map[int]reflect.Type
+	ptype     ParserType
+	typeMap   map[int]reflect.Type
+	actionMap map[string]reflect.Type
 }
 
 func (r *Parser) GetType() ParserType {
@@ -40,6 +41,12 @@ func (r *Parser) Register(cmd, act uint8, st interface{}) {
 	rt := reflect.TypeOf(st).Elem()
 
 	r.typeMap[CmdAct(cmd, act)] = rt
+}
+
+func (r *Parser) RegisterAction(action string, st interface{}) {
+	rt := reflect.TypeOf(st).Elem()
+
+	r.actionMap[action] = rt
 }
 
 func NewParser(Type ParserType) IParser {

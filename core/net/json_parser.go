@@ -15,12 +15,35 @@ type JsonParser struct {
 }
 
 type JsonMessage struct {
-	Handle string `json:"handle"`
-	Text   string `json:"text"`
+	Action string `json:"action"`
 }
 
 func (r *JsonParser) UnPack(msg *Message) error {
 	if msg == nil {
+		return ErrMsgJsonUnPack
+	}
+
+	if msg.Head == nil {
+		var actionMessage JsonMessage
+		err := json.Unmarshal(msg.Data, &actionMessage)
+		if err != nil {
+			base.LogInfo("JsonUnPack error:%v", err)
+			return ErrMsgJsonUnPack
+		}
+		if p, ok := r.actionMap[actionMessage.Action]; ok {
+			st := reflect.New(p).Interface()
+			if st != nil {
+				if len(msg.Data) > 0 {
+					err := JsonUnPack(msg.Data, st)
+					msg.UserData = st
+					if err != nil {
+						base.LogInfo("JsonUnPack error:%v", err)
+						return ErrMsgJsonUnPack
+					}
+				}
+				return nil
+			}
+		}
 		return ErrMsgJsonUnPack
 	}
 
@@ -37,14 +60,6 @@ func (r *JsonParser) UnPack(msg *Message) error {
 			}
 			return nil
 		}
-	}
-
-	var st JsonMessage
-	err := JsonUnPack(msg.Data, st)
-	msg.UserData = st
-	if err != nil {
-		base.LogInfo("JsonUnPack error:%v", err)
-		return ErrMsgJsonUnPack
 	}
 
 	return nil
