@@ -56,12 +56,14 @@ func NewParser(Type ParserType) IParser {
 			Parser: Parser{
 				ptype:   ParserTypePB,
 				typeMap: make(map[int]reflect.Type)},
+				actionMap: make(map[string]reflect.Type)},
 		}
 	} else if Type == ParserTypeJson {
 		return &JsonParser{
 			Parser: Parser{
 				ptype:   ParserTypeJson,
 				typeMap: make(map[int]reflect.Type)},
+				actionMap: make(map[string]reflect.Type)},
 		}
 	}
 
