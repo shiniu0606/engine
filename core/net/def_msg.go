@@ -6,39 +6,38 @@ import (
 )
 
 const (
-	MsgHeadSize = 8
-	MsgNormalVersion = 0x80	   //普通协议头
-	MsgRealIpVersion = 0x90	   //协议头插入realip
-	MaxMsgDataSize = 40960 
-	MsgTimeout = 300
+	MsgHeadSize      = 8
+	MsgNormalVersion = 0x80 //普通协议头
+	MsgRealIpVersion = 0x90 //协议头插入realip
+	MaxMsgDataSize   = 40960
+	MsgTimeout       = 300
 )
 
 var ErrMsgLenTooShort = errors.New("message len too short")
 var ErrMsgLenTooLong = errors.New("message len too long Blocked")
 
 const (
-	VerNormal    = 0x80	 //原始协议版本
-	VerProxy     = 0x81  //添加client ip协议版本
-	FlagNorlmal  = 0x10	 //原始协议流
+	VerNormal    = 0x80 //原始协议版本
+	VerProxy     = 0x81 //添加client ip协议版本
+	FlagNorlmal  = 0x10 //原始协议流
 	FlagEncrypt  = 0x11 //数据是经过加密的
 	FlagCompress = 0x12 //数据是经过压缩的
 )
 
 //内存对齐
 type MessageHead struct {
-	Ver 	uint8 //协议版本
-	Fla 	uint8 //标记
-	Cmd   	uint8
-	Act	  	uint8
-	Len   	uint32 //数据长度
+	Ver uint8 //协议版本
+	Fla uint8 //标记
+	Cmd uint8
+	Act uint8
+	Len uint32 //数据长度
 }
 
-
 type Message struct {
-	Head       *MessageHead //消息头，可能为nil
-	Data       []byte       //消息数据
+	Head *MessageHead //消息头，可能为nil
+	Data []byte       //消息数据
 
-	UserData   interface{}  //协议解包数据
+	UserData interface{} //协议解包数据
 }
 
 func (r *Message) CmdAct() int {
@@ -103,7 +102,6 @@ func (r *MessageHead) CmdAct() int {
 	return CmdAct(r.Cmd, r.Act)
 }
 
-
 func NewMessageHead(data []byte) *MessageHead {
 	head := &MessageHead{}
 	if err := head.FromBytes(data); err != nil {
@@ -115,11 +113,11 @@ func NewMessageHead(data []byte) *MessageHead {
 func NewMsg(cmd, act, flag uint8, data []byte) *Message {
 	return &Message{
 		Head: &MessageHead{
-			Ver:   MsgNormalVersion,
-			Fla:   flag,
-			Len:   uint32(len(data)),
-			Cmd:   cmd,
-			Act:   act,
+			Ver: MsgNormalVersion,
+			Fla: flag,
+			Len: uint32(len(data)),
+			Cmd: cmd,
+			Act: act,
 		},
 		Data: data,
 	}

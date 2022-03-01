@@ -10,7 +10,6 @@ var (
 	md5_salt = "0fdfa5e5a88gefae640k5d88e7c84708"
 )
 
-
 func MD5Str(s string) string {
 	return MD5Bytes([]byte(s))
 }

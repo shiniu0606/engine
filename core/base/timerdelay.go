@@ -5,14 +5,14 @@ import (
 )
 
 type DelayFunc struct {
-	f func(...interface{}) 
-	args []interface{} 
+	f    func(...interface{})
+	args []interface{}
 }
 
 func NewDelayFunc(f func(v ...interface{}), args []interface{}) *DelayFunc {
 	return &DelayFunc{
-		f:f,
-		args:args,
+		f:    f,
+		args: args,
 	}
 }
 

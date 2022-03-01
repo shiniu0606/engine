@@ -3,20 +3,20 @@ package net
 import (
 	"io"
 	"net"
+	"strings"
 	"sync"
 	"time"
-	"strings"
 
 	base "github.com/shiniu0606/engine/core/base"
 )
 
 type tcpSession struct {
 	Session
-	conn       net.Conn     //连接
-	listener   net.Listener //监听
-	wait       sync.WaitGroup
+	conn     net.Conn     //连接
+	listener net.Listener //监听
+	wait     sync.WaitGroup
 
-	address    string
+	address string
 }
 
 func (r *tcpSession) GetNetType() NetType {
@@ -26,7 +26,7 @@ func (r *tcpSession) GetNetType() NetType {
 func (r *tcpSession) LocalAddr() string {
 	if r.conn != nil {
 		return r.conn.LocalAddr().String()
-	} 
+	}
 	return ""
 }
 
@@ -52,7 +52,7 @@ func (r *tcpSession) read() {
 	r.readMsg()
 }
 
-func (r *tcpSession) readMsg(){
+func (r *tcpSession) readMsg() {
 	headData := make([]byte, MsgHeadSize)
 	var data []byte
 	var head *MessageHead
@@ -71,11 +71,11 @@ func (r *tcpSession) readMsg(){
 		}
 
 		if head.Ver != VerNormal && head.Ver != VerProxy {
-			base.LogError("session:%v  msg head ver error:%v", r.id,head.Ver)
+			base.LogError("session:%v  msg head ver error:%v", r.id, head.Ver)
 			break
 		}
 		if head.Len == 0 {
-			if !r.processMsg(r,&Message{Head: head}) {
+			if !r.processMsg(r, &Message{Head: head}) {
 				base.LogError("session:%v process msg cmd:%v act:%v", r.id, head.Cmd, head.Act)
 				break
 			}
@@ -88,7 +88,7 @@ func (r *tcpSession) readMsg(){
 				base.LogError("session:%v recv data err:%v", r.id, err)
 				break
 			}
-			if !r.processMsg(r,&Message{Head: head, Data: data}) {
+			if !r.processMsg(r, &Message{Head: head, Data: data}) {
 				base.LogError("session:%v process msg cmd:%v act:%v", r.id, head.Cmd, head.Act)
 				break
 			}
@@ -125,7 +125,7 @@ func (r *tcpSession) writeMsg() {
 	defer tick.Stop()
 	for {
 		select {
-		case <- r.closeChan:
+		case <-r.closeChan:
 			base.LogInfo("session write close id:%v ", r.id)
 			return
 		case m = <-r.sendChan:
@@ -198,7 +198,7 @@ func (r *tcpSession) connect() bool {
 }
 
 func (r *tcpSession) listen() {
-	defer func(){
+	defer func() {
 		if err := recover(); err != nil {
 			base.LogError("session write panic id:%v err:%v", r.id, err.(error))
 			base.LogStack()
@@ -214,16 +214,16 @@ func (r *tcpSession) listen() {
 			base.LogError("accept failed session:%v err:%v", r.id, err)
 			break
 		} else {
-			base.Go(func(){
-				session := newTcpAccept(c, r.handler,r.parser)
+			base.Go(func() {
+				session := newTcpAccept(c, r.handler, r.parser)
 				if r.handler.OnStartHandle(session) {
-					base.Go(func(){
+					base.Go(func() {
 						base.LogInfo("process read for session:%d", session.id)
 						session.read()
 						base.LogInfo("process read end for session:%d", session.id)
 					})
 
-					base.Go(func(){
+					base.Go(func() {
 						base.LogInfo("process write for session:%d", session.id)
 						session.write()
 						base.LogInfo("process write end for session:%d", session.id)
@@ -242,15 +242,15 @@ func (r *tcpSession) listen() {
 func newTcpAccept(conn net.Conn, handler IMsgHandler, parser IParser) *tcpSession {
 	tcpsession := tcpSession{
 		Session: Session{
-			id:            base.GetMsgSessionId(),
-			sendChan:      make(chan *Message, base.GetMaxMsgChanLen()),
-			closeChan:	   make(chan int),
-			msgTyp:        NetTypeTcp,
-			handler:       handler,
-			parser:		   parser,
-			timeout:       MsgTimeout,
-			connTyp:       ConnTypeAccept,
-			lastTick:      base.GetTimestamp(),
+			id:        base.GetMsgSessionId(),
+			sendChan:  make(chan *Message, base.GetMaxMsgChanLen()),
+			closeChan: make(chan int),
+			msgTyp:    NetTypeTcp,
+			handler:   handler,
+			parser:    parser,
+			timeout:   MsgTimeout,
+			connTyp:   ConnTypeAccept,
+			lastTick:  base.GetTimestamp(),
 		},
 		conn: conn,
 	}
@@ -262,13 +262,13 @@ func newTcpAccept(conn net.Conn, handler IMsgHandler, parser IParser) *tcpSessio
 func newTcpListen(listener net.Listener, handler IMsgHandler, parser IParser, addr string) *tcpSession {
 	tcpsession := tcpSession{
 		Session: Session{
-			id:            base.GetMsgSessionId(),
-			msgTyp:        NetTypeTcp,
-			handler:       handler,
-			parser:		   parser,
-			timeout:       MsgTimeout,
-			connTyp:       ConnTypeListen,
-			lastTick:      base.GetTimestamp(),
+			id:       base.GetMsgSessionId(),
+			msgTyp:   NetTypeTcp,
+			handler:  handler,
+			parser:   parser,
+			timeout:  MsgTimeout,
+			connTyp:  ConnTypeListen,
+			lastTick: base.GetTimestamp(),
 		},
 		listener: listener,
 	}
@@ -280,15 +280,15 @@ func newTcpListen(listener net.Listener, handler IMsgHandler, parser IParser, ad
 func newTcpConn(addr string, conn net.Conn, handler IMsgHandler, parser IParser) *tcpSession {
 	tcpsession := tcpSession{
 		Session: Session{
-			id:            base.GetMsgSessionId(),
-			sendChan:      make(chan *Message, base.GetMaxMsgChanLen()),
-			closeChan:	   make(chan int),
-			msgTyp:        NetTypeTcp,
-			handler:       handler,
-			parser:		   parser,
-			timeout:       MsgTimeout,
-			connTyp:       ConnTypeConn,
-			lastTick:      base.GetTimestamp(),
+			id:        base.GetMsgSessionId(),
+			sendChan:  make(chan *Message, base.GetMaxMsgChanLen()),
+			closeChan: make(chan int),
+			msgTyp:    NetTypeTcp,
+			handler:   handler,
+			parser:    parser,
+			timeout:   MsgTimeout,
+			connTyp:   ConnTypeConn,
+			lastTick:  base.GetTimestamp(),
 		},
 		conn:    conn,
 		address: addr,
@@ -303,7 +303,7 @@ func StartTcpServer(addr string, handler IMsgHandler, parser IParser) error {
 	if addrs[0] == "tcp" || addrs[0] == "all" {
 		listen, err := net.Listen("tcp", addrs[1])
 		if err == nil {
-			session := newTcpListen(listen,handler,parser, addr)
+			session := newTcpListen(listen, handler, parser, addr)
 			base.Go(func() {
 				base.LogDebug("process listen for tcp session:%d", session.id)
 				session.listen()
@@ -319,8 +319,8 @@ func StartTcpServer(addr string, handler IMsgHandler, parser IParser) error {
 }
 
 func StartTcpConnect(addr string, handler IMsgHandler, parser IParser) ISession {
-	session := newTcpConn(addr, nil,handler,parser)
-	
+	session := newTcpConn(addr, nil, handler, parser)
+
 	if handler.OnStartHandle(session) {
 		if session.connect() {
 			return session
@@ -330,5 +330,3 @@ func StartTcpConnect(addr string, handler IMsgHandler, parser IParser) ISession 
 	}
 	return nil
 }
-
-

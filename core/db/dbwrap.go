@@ -35,7 +35,7 @@ func InitDB(driver, dbConnStr string) {
 }
 
 //带连接池设置的DB对象
-func InitDBForPoll(driver, dbConnStr string, maxConn int,idleConn int) {
+func InitDBForPoll(driver, dbConnStr string, maxConn int, idleConn int) {
 	db, err := gorm.Open(driver, dbConnStr)
 	if err != nil {
 		base.LogError("db init error：" + err.Error())
@@ -202,5 +202,3 @@ func QueryCount(queryStr string, values ...interface{}) (int64, error) {
 	}
 	return total, nil
 }
-
-

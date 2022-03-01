@@ -30,7 +30,7 @@ func Go(fn func()) {
 	}
 
 	go func() {
-		Try(fn,nil)
+		Try(fn, nil)
 
 		if DefLog.GetLevel() <= LogLevelDebug {
 			c = atomic.AddInt32(&gocount, -1)

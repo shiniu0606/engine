@@ -27,8 +27,8 @@ type IParserFactory interface {
 }
 
 type Parser struct {
-	ptype    ParserType
-	typeMap  map[int]reflect.Type
+	ptype   ParserType
+	typeMap map[int]reflect.Type
 }
 
 func (r *Parser) GetType() ParserType {
@@ -45,11 +45,17 @@ func (r *Parser) Register(cmd, act uint8, st interface{}) {
 func NewParser(Type ParserType) IParser {
 	if Type == ParserTypePB {
 		return &PBParser{
-			Parser : Parser{
-				ptype 		: ParserTypePB,
-				typeMap		: make(map[int]reflect.Type),},
+			Parser: Parser{
+				ptype:   ParserTypePB,
+				typeMap: make(map[int]reflect.Type)},
+		}
+	} else if Type == ParserTypeJson {
+		return &JsonParser{
+			Parser: Parser{
+				ptype:   ParserTypeJson,
+				typeMap: make(map[int]reflect.Type)},
 		}
 	}
 
 	return nil
-} 
+}

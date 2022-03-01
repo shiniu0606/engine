@@ -3,6 +3,7 @@ package net
 import (
 	"errors"
 	"reflect"
+
 	"github.com/golang/protobuf/proto"
 
 	base "github.com/shiniu0606/engine/core/base"
@@ -21,16 +22,16 @@ func (r *PBParser) UnPack(msg *Message) error {
 
 	if msg.Head == nil {
 		return ErrMsgPbUnPack
-	} 
+	}
 
 	if p, ok := r.typeMap[msg.Head.CmdAct()]; ok {
 		st := reflect.New(p).Interface()
 		if st != nil {
 			if len(msg.Data) > 0 {
 				err := PBUnPack(msg.Data, st)
-				msg.UserData = st 
+				msg.UserData = st
 				if err != nil {
-					base.LogInfo("PBUnPack error:%v",err)
+					base.LogInfo("PBUnPack error:%v", err)
 					return ErrMsgPbUnPack
 				}
 			}
@@ -57,7 +58,6 @@ func PBUnPack(data []byte, msg interface{}) error {
 	}
 	return nil
 }
-
 
 func PBPack(msg interface{}) ([]byte, error) {
 	if msg == nil {

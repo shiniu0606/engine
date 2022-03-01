@@ -2,9 +2,9 @@ package net
 
 import (
 	"net/http"
+	"strings"
 	"sync"
 	"time"
-	"strings"
 
 	"github.com/gorilla/websocket"
 	base "github.com/shiniu0606/engine/core/base"
@@ -16,10 +16,10 @@ type wsSession struct {
 	upgrader *websocket.Upgrader
 	addr     string
 	url      string
-	wait       sync.WaitGroup
+	wait     sync.WaitGroup
 	listener *http.Server
 
-	enablewss bool
+	enablewss  bool
 	sslcrtpath string
 	sslkeypath string
 }
@@ -77,7 +77,7 @@ func (r *wsSession) writeMsg() {
 	defer tick.Stop()
 	for {
 		select {
-		case <- r.closeChan:
+		case <-r.closeChan:
 			base.LogInfo("wsSession write close id:%v ", r.id)
 			return
 		case m = <-r.sendChan:
@@ -115,7 +115,7 @@ func (r *wsSession) write() {
 }
 
 func (r *wsSession) listen() {
-	defer func(){
+	defer func() {
 		if err := recover(); err != nil {
 			base.LogError("wsSession write panic id:%v err:%v", r.id, err.(error))
 			base.LogStack()
@@ -172,7 +172,7 @@ func (r *wsSession) listen() {
 }
 
 func (r *wsSession) connect() {
-	base.LogInfo("connect to addr:%s wsSession:%d",r.addr, r.id)
+	base.LogInfo("connect to addr:%s wsSession:%d", r.addr, r.id)
 	c, _, err := websocket.DefaultDialer.Dial(r.addr, nil)
 	if err != nil {
 		base.LogInfo("connect to addr:%s failed wsSession:%d err:%v ", r.addr, r.id, err)
@@ -201,14 +201,14 @@ func (r *wsSession) connect() {
 func newWsAccept(conn *websocket.Conn, handler IMsgHandler) *wsSession {
 	wssession := wsSession{
 		Session: Session{
-			id:            base.GetMsgSessionId(),
-			sendChan:      make(chan *Message, base.GetMaxMsgChanLen()),
-			closeChan:	   make(chan int),
-			msgTyp:        NetTypeWs,
-			handler:       handler,
-			timeout:       MsgTimeout,
-			connTyp:       ConnTypeAccept,
-			lastTick:      base.GetTimestamp(),
+			id:        base.GetMsgSessionId(),
+			sendChan:  make(chan *Message, base.GetMaxMsgChanLen()),
+			closeChan: make(chan int),
+			msgTyp:    NetTypeWs,
+			handler:   handler,
+			timeout:   MsgTimeout,
+			connTyp:   ConnTypeAccept,
+			lastTick:  base.GetTimestamp(),
 		},
 		conn: conn,
 	}
@@ -217,24 +217,24 @@ func newWsAccept(conn *websocket.Conn, handler IMsgHandler) *wsSession {
 	return &wssession
 }
 
-func newWsListen(addr, url string,enableWss bool,wssCrtPath, wssKeyPath string, handler IMsgHandler) *wsSession {
+func newWsListen(addr, url string, enableWss bool, wssCrtPath, wssKeyPath string, handler IMsgHandler) *wsSession {
 	wssession := wsSession{
 		Session: Session{
-			id:            	base.GetMsgSessionId(),
-			sendChan:      	make(chan *Message, base.GetMaxMsgChanLen()),
-			closeChan:	   	make(chan int),
-			msgTyp:        	NetTypeWs,
-			handler:       	handler,
-			timeout:       	MsgTimeout,
-			connTyp:       	ConnTypeListen,
-			lastTick:      	base.GetTimestamp(),
+			id:        base.GetMsgSessionId(),
+			sendChan:  make(chan *Message, base.GetMaxMsgChanLen()),
+			closeChan: make(chan int),
+			msgTyp:    NetTypeWs,
+			handler:   handler,
+			timeout:   MsgTimeout,
+			connTyp:   ConnTypeListen,
+			lastTick:  base.GetTimestamp(),
 		},
-		addr:     addr,
-		url:      url,
-		enablewss:	   	enableWss,
-		sslcrtpath:		wssCrtPath,
-		sslkeypath:		wssKeyPath,
-		listener: &http.Server{Addr: addr},
+		addr:       addr,
+		url:        url,
+		enablewss:  enableWss,
+		sslcrtpath: wssCrtPath,
+		sslkeypath: wssKeyPath,
+		listener:   &http.Server{Addr: addr},
 	}
 
 	base.LogInfo("new wssession listen id:%d addr:%s url:%s", wssession.id, addr, url)
@@ -244,16 +244,16 @@ func newWsListen(addr, url string,enableWss bool,wssCrtPath, wssKeyPath string, 
 func newWsConn(addr string, conn *websocket.Conn, handler IMsgHandler) *wsSession {
 	wssession := wsSession{
 		Session: Session{
-			id:            base.GetMsgSessionId(),
-			sendChan:      make(chan *Message, base.GetMaxMsgChanLen()),
-			closeChan:	   make(chan int),
-			msgTyp:        NetTypeWs,
-			handler:       handler,
-			timeout:       MsgTimeout,
-			connTyp:       ConnTypeConn,
-			lastTick:      base.GetTimestamp(),
+			id:        base.GetMsgSessionId(),
+			sendChan:  make(chan *Message, base.GetMaxMsgChanLen()),
+			closeChan: make(chan int),
+			msgTyp:    NetTypeWs,
+			handler:   handler,
+			timeout:   MsgTimeout,
+			connTyp:   ConnTypeConn,
+			lastTick:  base.GetTimestamp(),
 		},
-		conn:    conn,
+		conn: conn,
 		addr: addr,
 	}
 
@@ -261,7 +261,7 @@ func newWsConn(addr string, conn *websocket.Conn, handler IMsgHandler) *wsSessio
 	return &wssession
 }
 
-func StartWebscoketServer(addr string, handler IMsgHandler,wsscrtpath,wsskeypath string) error {
+func StartWebscoketServer(addr string, handler IMsgHandler, wsscrtpath, wsskeypath string) error {
 	addrs := strings.Split(addr, "://")
 	enablewss := false
 	if addrs[0] == "ws" || addrs[0] == "wss" {
@@ -274,8 +274,8 @@ func StartWebscoketServer(addr string, handler IMsgHandler,wsscrtpath,wsskeypath
 			enablewss = true
 		}
 
-		wssession := newWsListen(naddr[0], url,enablewss, wsscrtpath,wsskeypath, handler)
-		base.Go(func(){
+		wssession := newWsListen(naddr[0], url, enablewss, wsscrtpath, wsskeypath, handler)
+		base.Go(func() {
 			base.LogDebug("process listen for wssession:%d", wssession.id)
 			wssession.listen()
 			base.LogDebug("process listen end for wssession:%d", wssession.id)
@@ -286,8 +286,8 @@ func StartWebscoketServer(addr string, handler IMsgHandler,wsscrtpath,wsskeypath
 }
 
 func StartWebsocketConnect(addr string, handler IMsgHandler) ISession {
-	session := newWsConn(addr, nil,handler)
-	
+	session := newWsConn(addr, nil, handler)
+
 	if handler.OnStartHandle(session) {
 		session.connect()
 		return session

@@ -7,13 +7,13 @@ import (
 )
 
 const (
-	MAX_CHAN_BUFF = 2048
+	MAX_CHAN_BUFF  = 2048
 	MAX_TIME_DELAY = 100
 )
 
 type TimerScheduler struct {
-	tw *TimeWheel
-	idGen uint32
+	tw          *TimeWheel
+	idGen       uint32
 	triggerChan chan *DelayFunc
 	sync.RWMutex
 }
@@ -33,12 +33,12 @@ func NewTimerScheduler() *TimerScheduler {
 
 	return &TimerScheduler{
 		tw:          hourTW,
-		idGen:		 1,
+		idGen:       1,
 		triggerChan: make(chan *DelayFunc, MAX_CHAN_BUFF),
 	}
 }
 
-func (this *TimerScheduler) CreateTimerAt(unixNano int64, f func(v ...interface{}), args []interface{})(uint32, error) {
+func (this *TimerScheduler) CreateTimerAt(unixNano int64, f func(v ...interface{}), args []interface{}) (uint32, error) {
 	this.Lock()
 	defer this.Unlock()
 
@@ -47,7 +47,7 @@ func (this *TimerScheduler) CreateTimerAt(unixNano int64, f func(v ...interface{
 	return this.idGen, this.tw.AddTimer(this.idGen, NewTimerAt(unixNano, f, args))
 }
 
-func (this *TimerScheduler) NewTimerAfter(duration time.Duration, f func(v ...interface{}), args []interface{})(uint32, error) {
+func (this *TimerScheduler) NewTimerAfter(duration time.Duration, f func(v ...interface{}), args []interface{}) (uint32, error) {
 	this.Lock()
 	defer this.Unlock()
 
@@ -55,7 +55,7 @@ func (this *TimerScheduler) NewTimerAfter(duration time.Duration, f func(v ...in
 	return this.idGen, this.tw.AddTimer(this.idGen, NewTimerAfter(duration, f, args))
 }
 
-func  (this *TimerScheduler) NewTimerInterval(duration time.Duration, times int, f func(v ...interface{}), args []interface{})(uint32, error){
+func (this *TimerScheduler) NewTimerInterval(duration time.Duration, times int, f func(v ...interface{}), args []interface{}) (uint32, error) {
 	this.Lock()
 	defer this.Unlock()
 
@@ -63,7 +63,7 @@ func  (this *TimerScheduler) NewTimerInterval(duration time.Duration, times int,
 	return this.idGen, this.tw.AddTimer(this.idGen, NewTimerInterval(duration, times, f, args))
 }
 
-func(this *TimerScheduler) CancelTimer(tid uint32) {
+func (this *TimerScheduler) CancelTimer(tid uint32) {
 	this.Lock()
 	this.Unlock()
 
@@ -87,12 +87,12 @@ func (this *TimerScheduler) Start() {
 				this.triggerChan <- timer.delayFunc
 			}
 
-			time.Sleep(MAX_TIME_DELAY/2 * time.Millisecond)
+			time.Sleep(MAX_TIME_DELAY / 2 * time.Millisecond)
 		}
 	}()
 }
 
-func NewAutoExecTimerScheduler() *TimerScheduler{
+func NewAutoExecTimerScheduler() *TimerScheduler {
 	autoExecScheduler := NewTimerScheduler()
 	autoExecScheduler.Start()
 

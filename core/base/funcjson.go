@@ -1,8 +1,8 @@
 package base
 
 import (
-	"io/ioutil"
 	"encoding/json"
+	"io/ioutil"
 )
 
 //InitConfigFile 初始化配置文件信息

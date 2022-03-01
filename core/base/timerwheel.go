@@ -7,13 +7,13 @@ import (
 )
 
 type TimeWheel struct {
-	name 			string
-	interval 		int64
-	scales 			int
-	curIndex 		int
-	maxCap 			int
-	timerQueue 		map[int]map[uint32]*Timer 
-	nextTimeWheel 	*TimeWheel
+	name          string
+	interval      int64
+	scales        int
+	curIndex      int
+	maxCap        int
+	timerQueue    map[int]map[uint32]*Timer
+	nextTimeWheel *TimeWheel
 	sync.RWMutex
 }
 
@@ -74,7 +74,7 @@ func (tw *TimeWheel) addTimer(tid uint32, t *Timer, forceNext bool) error {
 
 	if delayInterval < tw.interval && tw.nextTimeWheel == nil {
 		if forceNext == true {
-			tw.timerQueue[(tw.curIndex+1) % tw.scales][tid] = t
+			tw.timerQueue[(tw.curIndex+1)%tw.scales][tid] = t
 		} else {
 			tw.timerQueue[tw.curIndex][tid] = t
 		}
@@ -99,13 +99,13 @@ func (tw *TimeWheel) run() {
 			tw.addTimer(tid, timer, true)
 		}
 
-		nextTimers := tw.timerQueue[(tw.curIndex+1) % tw.scales]
-		tw.timerQueue[(tw.curIndex+1) % tw.scales] = make(map[uint32]*Timer, tw.maxCap)
+		nextTimers := tw.timerQueue[(tw.curIndex+1)%tw.scales]
+		tw.timerQueue[(tw.curIndex+1)%tw.scales] = make(map[uint32]*Timer, tw.maxCap)
 		for tid, timer := range nextTimers {
 			tw.addTimer(tid, timer, true)
 		}
 
-		tw.curIndex = (tw.curIndex+1) % tw.scales
+		tw.curIndex = (tw.curIndex + 1) % tw.scales
 
 		tw.Unlock()
 	}
@@ -134,9 +134,9 @@ func (tw *TimeWheel) GetTimerWithIn(duration time.Duration) map[uint32]Timer {
 			timerList[tid] = *timer
 			if timer.forever {
 				timer.unixMilli += timer.duration
-			}else if timer.times <= 1{
+			} else if timer.times <= 1 {
 				delete(leafTW.timerQueue[leafTW.curIndex], tid)
-			}else{
+			} else {
 				timer.times--
 				timer.unixMilli += timer.duration
 			}

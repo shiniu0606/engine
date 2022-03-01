@@ -1,13 +1,13 @@
 package base
 
 import (
-	"os"
 	"fmt"
-	"sync/atomic"
+	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"runtime"
+	"strings"
+	"sync/atomic"
 )
 
 type ILogger interface {
@@ -19,16 +19,16 @@ type ConsoleLogger struct {
 }
 
 type FileLogger struct {
-	FilePath 	string
-	Pln			bool
-	MaxSize		int
+	FilePath string
+	Pln      bool
+	MaxSize  int
 
-	size 		int
-	writer		*os.File
-	filename	string
+	size     int
+	writer   *os.File
+	filename string
 	extname  string
 	dirname  string
- }
+}
 
 func (l *ConsoleLogger) Write(msg string) {
 	if l.Pln {
@@ -52,8 +52,8 @@ func (l *FileLogger) Write(msg string) {
 		l.writer = nil
 
 		newpath := l.dirname + "/" + l.filename + fmt.Sprintf("_%v", GetDate()) + l.extname
-		os.Rename(l.FilePath,newpath)
-		file,err := os.OpenFile(l.FilePath,os.O_RDWR|os.O_APPEND|os.O_CREATE, 0666)
+		os.Rename(l.FilePath, newpath)
+		file, err := os.OpenFile(l.FilePath, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0666)
 		if err != nil {
 			l.writer = nil
 			return
@@ -63,8 +63,8 @@ func (l *FileLogger) Write(msg string) {
 	}
 
 	if l.Pln {
-		l.writer.WriteString(msg+"\n")
-	}else {
+		l.writer.WriteString(msg + "\n")
+	} else {
 		l.writer.WriteString(msg)
 	}
 
@@ -94,7 +94,7 @@ var LogLevelNameMap = map[string]LogLevel{
 type Log struct {
 	logger         [32]ILogger
 	cwrite         chan string
-	cstop		   chan bool
+	cstop          chan bool
 	bufsize        int
 	stop           int32
 	preLoggerCount int32
@@ -106,7 +106,7 @@ func NewLog(bufsize int, logger ...ILogger) *Log {
 	log := &Log{
 		bufsize:        bufsize,
 		cwrite:         make(chan string, bufsize),
-		cstop:			make(chan bool),
+		cstop:          make(chan bool),
 		level:          LogLevelDebug,
 		preLoggerCount: -1,
 	}
@@ -135,7 +135,7 @@ func (r *Log) initFileLogger(f *FileLogger) *FileLogger {
 	if f.writer == nil {
 		f.FilePath, _ = filepath.Abs(f.FilePath)
 		Println(f.FilePath)
-		f.FilePath = strings.Replace(f.FilePath, "\\", "/",-1)
+		f.FilePath = strings.Replace(f.FilePath, "\\", "/", -1)
 		f.dirname = path.Dir(f.FilePath)
 		f.extname = path.Ext(f.FilePath)
 		f.filename = filepath.Base(f.FilePath[0 : len(f.FilePath)-len(f.extname)])
@@ -152,7 +152,7 @@ func (r *Log) initFileLogger(f *FileLogger) *FileLogger {
 			return f
 		}
 	}
-	
+
 	return nil
 }
 
@@ -168,11 +168,11 @@ func (r *Log) IsStop() bool {
 }
 
 func (r *Log) StartLoop() {
-	Go(func (){
+	Go(func() {
 		var i int32
 		for {
 			select {
-			case s,ok := <-r.cwrite:
+			case s, ok := <-r.cwrite:
 				if ok {
 					for i = 0; i < r.loggerCount; i++ {
 						r.logger[i].Write(s)

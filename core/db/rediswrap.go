@@ -151,7 +151,6 @@ func (r *RedisManager) close() {
 	}
 }
 
-
 func (r *RedisManager) Sub(fun func(channel, data string), channels ...string) {
 	r.lock.Lock()
 	defer r.lock.Unlock()

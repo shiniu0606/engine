@@ -20,7 +20,6 @@ const (
 	ConnTypeAccept                 //Accept产生的
 )
 
-
 type ISession interface {
 	Id() uint64
 	GetConnType() ConnType
@@ -41,6 +40,5 @@ type ISession interface {
 	GetUser() interface{}
 
 	Send(m *Message) bool
-	SendString(str string)  bool
+	SendString(str string) bool
 }
-

@@ -13,24 +13,24 @@ var ErrSessionClosed = errors.New("session closes")
 var ErrSessionBlocked = errors.New("session blocked")
 
 type Session struct {
-	id 				uint64
+	id uint64
 
-	msgTyp  		NetType       //消息类型
-	connTyp 		ConnType      //通道类型
-	realRemoteAddr 	string
+	msgTyp         NetType  //消息类型
+	connTyp        ConnType //通道类型
+	realRemoteAddr string
 
-	sendChan  		chan *Message
-	sendMutex 		sync.RWMutex
+	sendChan  chan *Message
+	sendMutex sync.RWMutex
 
-	handler       	IMsgHandler
-	parser        	IParser
-	timeout       	int //传输超时 
+	handler IMsgHandler
+	parser  IParser
+	timeout int //传输超时
 
-	closeFlag          int32
-	closeChan          chan int
-	lastTick      	   int64
+	closeFlag int32
+	closeChan chan int
+	lastTick  int64
 
-	user	 		interface{}		//用户
+	user interface{} //用户
 }
 
 func (r *Session) Id() uint64 {
@@ -139,7 +139,7 @@ func (r *Session) Stop() error {
 	return ErrSessionClosed
 }
 
-func (r *Session) processMsg(s ISession,msg *Message) bool {
+func (r *Session) processMsg(s ISession, msg *Message) bool {
 	f := r.handler.GetHandlerFunc(msg)
 	if f == nil {
 		f = r.handler.OnProcessMsgHandle
@@ -151,5 +151,5 @@ func (r *Session) processMsg(s ISession,msg *Message) bool {
 		//base.LogInfo("processMsg start:%v",msg.UserData)
 	}
 
-	return f(s,msg)
+	return f(s, msg)
 }
