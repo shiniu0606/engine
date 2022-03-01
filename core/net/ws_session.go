@@ -140,7 +140,7 @@ func (r *wsSession) listen() {
 			base.LogError("wsSession accept failed :%v err:%v", r.id, err)
 		} else {
 			base.Go(func() {
-				session := newWsAccept(c, r.handler)
+				session := newWsAccept(c, r.handler, r.parser)
 				if r.handler.OnStartHandle(session) {
 					base.Go(func() {
 						base.LogInfo("process read for session:%d", session.id)
@@ -198,7 +198,7 @@ func (r *wsSession) connect() {
 	}
 }
 
-func newWsAccept(conn *websocket.Conn, handler IMsgHandler) *wsSession {
+func newWsAccept(conn *websocket.Conn, handler IMsgHandler, parser IParser) *wsSession {
 	wssession := wsSession{
 		Session: Session{
 			id:        base.GetMsgSessionId(),
@@ -218,7 +218,7 @@ func newWsAccept(conn *websocket.Conn, handler IMsgHandler) *wsSession {
 	return &wssession
 }
 
-func newWsListen(addr, url string, enableWss bool, wssCrtPath, wssKeyPath string, handler IMsgHandler) *wsSession {
+func newWsListen(addr, url string, enableWss bool, wssCrtPath, wssKeyPath string, handler IMsgHandler, parser IParser) *wsSession {
 	wssession := wsSession{
 		Session: Session{
 			id:        base.GetMsgSessionId(),
@@ -243,7 +243,7 @@ func newWsListen(addr, url string, enableWss bool, wssCrtPath, wssKeyPath string
 	return &wssession
 }
 
-func newWsConn(addr string, conn *websocket.Conn, handler IMsgHandler) *wsSession {
+func newWsConn(addr string, conn *websocket.Conn, handler IMsgHandler, parser IParser) *wsSession {
 	wssession := wsSession{
 		Session: Session{
 			id:        base.GetMsgSessionId(),
@@ -264,7 +264,7 @@ func newWsConn(addr string, conn *websocket.Conn, handler IMsgHandler) *wsSessio
 	return &wssession
 }
 
-func StartWebscoketServer(addr string, handler IMsgHandler, wsscrtpath, wsskeypath string) error {
+func StartWebscoketServer(addr string, handler IMsgHandler, parser IParser, wsscrtpath, wsskeypath string) error {
 	addrs := strings.Split(addr, "://")
 	enablewss := false
 	if addrs[0] == "ws" || addrs[0] == "wss" {
@@ -277,7 +277,7 @@ func StartWebscoketServer(addr string, handler IMsgHandler, wsscrtpath, wsskeypa
 			enablewss = true
 		}
 
-		wssession := newWsListen(naddr[0], url, enablewss, wsscrtpath, wsskeypath, handler)
+		wssession := newWsListen(naddr[0], url, enablewss, wsscrtpath, wsskeypath, handler, parser)
 		base.Go(func() {
 			base.LogDebug("process listen for wssession:%d", wssession.id)
 			wssession.listen()
@@ -288,8 +288,8 @@ func StartWebscoketServer(addr string, handler IMsgHandler, wsscrtpath, wsskeypa
 	return nil
 }
 
-func StartWebsocketConnect(addr string, handler IMsgHandler) ISession {
-	session := newWsConn(addr, nil, handler)
+func StartWebsocketConnect(addr string, handler IMsgHandler, parser IParser) ISession {
+	session := newWsConn(addr, nil, handler, parser)
 
 	if handler.OnStartHandle(session) {
 		session.connect()
