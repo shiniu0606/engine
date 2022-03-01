@@ -24,10 +24,6 @@ func (r *JsonParser) UnPack(msg *Message) error {
 		return ErrMsgJsonUnPack
 	}
 
-	if msg.Head == nil {
-		return ErrMsgJsonUnPack
-	}
-
 	if p, ok := r.typeMap[msg.Head.CmdAct()]; ok {
 		st := reflect.New(p).Interface()
 		if st != nil {
