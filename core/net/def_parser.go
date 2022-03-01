@@ -20,6 +20,7 @@ type IParser interface {
 	UnPack(msg *Message) error
 	Pack(v interface{}) []byte
 	Register(cmd, act uint8, st interface{})
+	RegisterAction(action string, st interface{})
 }
 
 type IParserFactory interface {
