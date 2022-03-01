@@ -146,9 +146,9 @@ func (r *Session) processMsg(s ISession, msg *Message) bool {
 	}
 
 	if r.parser != nil {
-		//base.LogInfo("processMsg start:%v",msg.Data)
+		base.LogInfo("processMsg start:%v", msg.Data)
 		r.parser.UnPack(msg)
-		//base.LogInfo("processMsg start:%v",msg.UserData)
+		base.LogInfo("processMsg start:%v", msg.UserData)
 	}
 
 	return f(s, msg)

@@ -14,6 +14,11 @@ type JsonParser struct {
 	Parser
 }
 
+type JsonMessage struct {
+	Handle string `json:"handle"`
+	Text   string `json:"text"`
+}
+
 func (r *JsonParser) UnPack(msg *Message) error {
 	if msg == nil {
 		return ErrMsgJsonUnPack
@@ -36,6 +41,14 @@ func (r *JsonParser) UnPack(msg *Message) error {
 			}
 			return nil
 		}
+	}
+
+	var st JsonMessage
+	err := JsonUnPack(msg.Data, st)
+	msg.UserData = st
+	if err != nil {
+		base.LogInfo("JsonUnPack error:%v", err)
+		return ErrMsgJsonUnPack
 	}
 
 	return nil
