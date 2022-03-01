@@ -52,7 +52,7 @@ func (r *wsSession) readMsg() {
 			base.LogError("wsSession:%v recv data err:%v", r.id, err)
 			break
 		}
-		base.LogInfo("readMsg:%v ", data)
+
 		if !r.processMsg(r, &Message{Data: data}) {
 			break
 		}
